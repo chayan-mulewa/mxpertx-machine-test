@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Header, Card } from '../components/index';
 import axios from 'axios';
 
 function Page2() {
-  const parallaxRef = useRef(null);
   const [data, setData] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -13,7 +12,7 @@ function Page2() {
       try {
         const response = await axios.get('https://child.onrender.com/api/sciencefiction');
         setData(response.data);
-
+        console.log(response.data[0]);
         setTotalPages(Math.ceil(response.data.length / 8));
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -22,23 +21,6 @@ function Page2() {
 
     fetchData();
   }, []);
-
-  useEffect(() => {
-    const parallaxEffect = () => {
-      if (parallaxRef.current) {
-        const scrollTop = window.pageYOffset;
-        const parallaxOffset = -(scrollTop * 0.5);
-        parallaxRef.current.style.backgroundPositionY = `calc(50% + ${parallaxOffset}px)`;
-      }
-    };
-    window.addEventListener('scroll', parallaxEffect);
-
-    return () => {
-      window.removeEventListener('scroll', parallaxEffect);
-    };
-  }, []);
-
-  const imagePath = "The_Galactic_Time_Travelers_qOkLSv4b3.png";
 
   const handleClickNext = () => {
     if (currentPage < totalPages) {
@@ -87,18 +69,19 @@ function Page2() {
 
         <div className='h-full w-full grid grid-flow-col grid-rows-2   gap-9 p-16 justify-end items-end'>
 
-          {data && (
-            data.slice(startIndex, endIndex).map((item, index) => (
-              <Card
+        {data && data[0] && (
+  data.slice(startIndex, endIndex).map((item, index) => (
+    <Card
+      key={index}
+      // title={item.Title}
+      description={item.Wordexplore.length > 0 ? item.Wordexplore[0].Storytitle : ""}
+      image={item.Image}
+      // buttonStatus={item.Status}
+    />
+  ))
+)}
 
-                key={index}
-                // title={item.Title} // Un-commented title prop
-                description={item.Wordexplore.length > 0 ? item.Wordexplore[0].Storytitle : ""}
-                image={item.Image}
-              // buttonStatus={item.Status} // Un-commented buttonStatus prop
-              />
-            ))
-          )}
+
 
 
         </div>
